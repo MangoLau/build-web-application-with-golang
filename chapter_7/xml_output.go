@@ -1,0 +1,37 @@
+package main
+
+import (
+	"encoding/xml"
+	"fmt"
+	"os"
+)
+
+type Servers struct {
+	XMLName xml.Name `xml:"servers"`
+	Version string   `xml:"version,attr"`
+	Svs     []server `xml:"server"`
+}
+
+type server struct {
+	ServerName string `xml:"serverName"`
+	ServerIP   string `xml:"serverIP"`
+}
+
+func main() {
+	v := &Servers{Version: "1"}
+	v.Svs = append(v.Svs, server{"Shanghai_VPN", "127.0.0.1"})
+	v.Svs = append(v.Svs, server{"Beijing_vpn", "127.0.0.2"})
+	output, err := xml.MarshalIndent(v, "  ", "    ")
+	if err != nil {
+		fmt.Printf("error: %v\n", err)
+	}
+	_, err = os.Stdout.Write([]byte(xml.Header))
+	if err != nil {
+		return
+	}
+
+	_, err = os.Stdout.Write(output)
+	if err != nil {
+		return
+	}
+}
